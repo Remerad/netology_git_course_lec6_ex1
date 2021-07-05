@@ -30,6 +30,14 @@ class Student:
         print('Курсы в процессе изучения: ' + ', '.join(self.courses_in_progress))
         print('Завершенные курсы: ' + ', '.join(self.finished_courses))
 
+    def __lt__(self, other):
+        if not isinstance(other, Student):
+            print('Оценки студента сравниваются с оценками студента!')
+            return
+        return (sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])) < \
+               (sum(list(other.grades.values())[0]) / len(list(other.grades.values())[0]))
+
+
 
 class Mentor:
     def __init__(self, name, surname):
@@ -48,6 +56,13 @@ class Lecturer(Mentor):
         print(f'Фамилия: {self.surname}')
         print(f'Средняя оценка за лекции: {sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])}')
 
+    def __lt__(self, other):
+        if not isinstance(other, Lecturer):
+            print('Оценки лектора сравниваются с оценками лектора!')
+            return
+        return (sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])) < \
+               (sum(list(other.grades.values())[0]) / len(list(other.grades.values())[0]))
+
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
@@ -62,6 +77,15 @@ class Reviewer(Mentor):
     def __str__(self):
         print(f'Имя: {self.name}')
         print(f'Фамилия: {self.surname}')
+
+
+def average_grade(list_studs, course_title):
+    av_gr = 0
+    for s in list_studs:
+        for c in i.courses_in_progress:
+            if c == course_title:
+                av_gr += sum(s.grades.get(course_title)) / len(s.grades.get(course_title))
+    return av_gr
 
 
 if __name__ == '__main__':
@@ -90,17 +114,27 @@ if __name__ == '__main__':
     norm_reviewer.courses_attached += ['Git']
     list_of_reviewers.extend([cool_reviewer, norm_reviewer])
 
-    for i in list_of_students:
-        for j in i.courses_in_progress:
-            for k in list_of_lecturers:
-                if j in k.courses_attached:
-                    i.rate_lec(k, j, random.randint(5, 10))
+    for t in range(1,8):
+        for i in list_of_students:
+            for j in i.courses_in_progress:
+                for k in list_of_lecturers:
+                    if j in k.courses_attached:
+                        i.rate_lec(k, j, random.randint(5, 10))
 
-    for i in list_of_students:
-        for j in i.courses_in_progress:
-            for k in list_of_reviewers:
-                if j in k.courses_attached:
-                    k.rate_hw(i, j, random.randint(5, 10))
+        for i in list_of_students:
+            for j in i.courses_in_progress:
+                for k in list_of_reviewers:
+                    if j in k.courses_attached:
+                        k.rate_hw(i, j, random.randint(5, 10))
+
+    print(list_of_students[0].__lt__(list_of_students[1]))
+    print(list_of_lecturers[0].__lt__(list_of_lecturers[1]))
+
+    #for i in list_of_students:
+    #    print(i.grades)
+
+    print(f"Средняя оценка по курсу Git: {average_grade(list_of_students, 'Git'):.1f}")
+    print(f"Средняя оценка по курсу Python: {average_grade(list_of_students, 'Python'):.1f}")
 
     for i in list_of_students:
         i.__str__()
