@@ -109,7 +109,6 @@ if __name__ == '__main__':
     best_student.courses_in_progress += ['Python', 'Git']
     best_student.finished_courses += ['Как искать информацию в интернете']
     list_of_students.append(best_student)
-
     worst_student = Student('John', 'Bowman', 'your_gender')
     worst_student.courses_in_progress += ['Python', 'Git']
     worst_student.finished_courses += ['Как искать информацию в интернете']
