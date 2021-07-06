@@ -23,10 +23,10 @@ class Student:
     def __str__(self):
         print(f'Имя: {self.name}')
         print(f'Фамилия: {self.surname}')
-        # print(list(self.grades.values())[0])
-        # print(len(list(self.grades.values())[0]))
+        print(list(self.grades.values())[0])
+        print(len(list(self.grades.values())[0]))
         print(f'Средняя оценка за домашние задания: '
-              f'{sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])}')
+              f'{sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0]):.1f}')
         print('Курсы в процессе изучения: ' + ', '.join(self.courses_in_progress))
         print('Завершенные курсы: ' + ', '.join(self.finished_courses))
 
@@ -36,7 +36,6 @@ class Student:
             return
         return (sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])) < \
                (sum(list(other.grades.values())[0]) / len(list(other.grades.values())[0]))
-
 
 
 class Mentor:
@@ -54,7 +53,8 @@ class Lecturer(Mentor):
     def __str__(self):
         print(f'Имя: {self.name}')
         print(f'Фамилия: {self.surname}')
-        print(f'Средняя оценка за лекции: {sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0])}')
+        print(f'Средняя оценка за лекции:'
+              f' {sum(list(self.grades.values())[0]) / len(list(self.grades.values())[0]):.1f}')
 
     def __lt__(self, other):
         if not isinstance(other, Lecturer):
@@ -79,13 +79,28 @@ class Reviewer(Mentor):
         print(f'Фамилия: {self.surname}')
 
 
-def average_grade(list_studs, course_title):
-    av_gr = 0
-    for s in list_studs:
-        for c in i.courses_in_progress:
-            if c == course_title:
-                av_gr += sum(s.grades.get(course_title)) / len(s.grades.get(course_title))
-    return av_gr
+def students_average_grade(list_of_evaluating, course_title):
+    sum_of_grades = 0
+    count_of_grades = 0
+    for s in list_of_evaluating:
+        if isinstance(s, Student):
+            for c in s.courses_in_progress:
+                if c == course_title:
+                    sum_of_grades += sum(s.grades.get(course_title))
+                    count_of_grades += len(s.grades.get(course_title))
+    return sum_of_grades / count_of_grades
+
+
+def lecturer_average_grade(list_of_evaluating, course_title):
+    sum_of_grades = 0
+    count_of_grades = 0
+    for l in list_of_evaluating:
+        if isinstance(l, Lecturer):
+            for c in l.courses_attached:
+                if c == course_title:
+                    sum_of_grades += sum(l.grades.get(course_title))
+                    count_of_grades += len(l.grades.get(course_title))
+    return sum_of_grades / count_of_grades
 
 
 if __name__ == '__main__':
@@ -114,7 +129,7 @@ if __name__ == '__main__':
     norm_reviewer.courses_attached += ['Git']
     list_of_reviewers.extend([cool_reviewer, norm_reviewer])
 
-    for t in range(1,8):
+    for t in range(1, 8):
         for i in list_of_students:
             for j in i.courses_in_progress:
                 for k in list_of_lecturers:
@@ -130,11 +145,11 @@ if __name__ == '__main__':
     print(list_of_students[0].__lt__(list_of_students[1]))
     print(list_of_lecturers[0].__lt__(list_of_lecturers[1]))
 
-    #for i in list_of_students:
-    #    print(i.grades)
+    print(f"Средняя оценка студентов по курсу Git: {students_average_grade(list_of_students, 'Git'):.1f}")
+    print(f"Средняя оценка студентов по курсу Python: {students_average_grade(list_of_students, 'Python'):.1f}")
 
-    print(f"Средняя оценка по курсу Git: {average_grade(list_of_students, 'Git'):.1f}")
-    print(f"Средняя оценка по курсу Python: {average_grade(list_of_students, 'Python'):.1f}")
+    print(f"Средняя оценка лекторов по курсу Git: {lecturer_average_grade(list_of_lecturers, 'Git'):.1f}")
+    print(f"Средняя оценка лекторов по курсу Python: {lecturer_average_grade(list_of_lecturers, 'Python'):.1f}")
 
     for i in list_of_students:
         i.__str__()
